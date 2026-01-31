@@ -1,0 +1,4 @@
+- [ ] Initialiser la Web App Uber-like et configurer la carte interactive
+- [ ] Implémenter le calculateur de tarif Uber (Distance/Temps) et la sélection d'itinéraire
+- [ ] Développer l'interface utilisateur (Réservation, Estimation, Confirmation)
+- [ ] Préparer le package de déploiement universel pour Hostinger
