@@ -4,12 +4,16 @@ import { dirname, join } from 'path';
 import { existsSync } from 'fs';
 import os from 'os';
 import 'dotenv/config';
+import http from 'http';
+import { WebSocketServer } from 'ws';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const httpServer = http.createServer(app);
+const wss = new WebSocketServer({ server: httpServer });
 
 // Application state tracking
 let startTime = Date.now();
@@ -36,6 +40,17 @@ app.use((req, res, next) => {
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   next();
 });
+
+// Authentication middleware
+const authenticateAdmin = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const authToken = req.headers['x-admin-token'];
+  
+  if (!authToken || authToken !== process.env.ADMIN_SECRET) {
+    return res.status(401).json({ error: 'Accès non autorisé' });
+  }
+  
+  next();
+};
 
 // Content Security Policy - OPTIMISÉE
 app.use((req, res, next) => {
@@ -174,6 +189,64 @@ app.get('/api/config', (req, res) => {
   });
 });
 
+// Nouvelle route pour le statut chauffeur
+app.post('/api/driver/status', (req, res) => {
+  const { status } = req.body;
+  // Sauvegarde en base de données...
+  console.log(`Statut chauffeur mis à jour: ${status}`);
+  res.status(200).json({ success: true });
+});
+
+// Route pour les revenus
+app.get('/api/driver/earnings', (req, res) => {
+  // Récupération des données depuis la base de données
+  // Exemple de données statiques
+  res.json({
+    today: 85.50,
+    thisWeek: 420.75,
+    thisMonth: 1850.30
+  });
+});
+
+// ======================
+// ADMIN ROUTES
+// ======================
+
+// Validation documents chauffeurs
+app.get('/api/admin/driver-documents', authenticateAdmin, (req, res) => {
+  // Exemple de données statiques
+  res.json([
+    { id: '1', driverName: 'John Doe', documentType: 'Permis de conduire', status: 'en attente' },
+    { id: '2', driverName: 'Jane Smith', documentType: 'Carte grise', status: 'validé' },
+  ]);
+});
+
+app.post('/api/admin/validate-document', authenticateAdmin, (req, res) => {
+  const { documentId } = req.body;
+  // Logique de validation
+  res.json({ success: true, message: `Document ${documentId} validé` });
+});
+
+// Gestion des commissions
+app.get('/api/admin/commissions', authenticateAdmin, (req, res) => {
+  // Exemple de données statiques
+  res.json([
+    { id: '1', driverName: 'John Doe', amount: 120.50, status: 'payé' },
+    { id: '2', driverName: 'Jane Smith', amount: 85.30, status: 'en attente' },
+  ]);
+});
+
+// Statistiques de flotte
+app.get('/api/admin/fleet-stats', authenticateAdmin, (req, res) => {
+  // Exemple de données statiques
+  res.json({
+    totalVehicles: 42,
+    activeVehicles: 35,
+    averageUtilization: 78.5,
+    revenuePerVehicle: 2450.30
+  });
+});
+
 // Health check
 app.get('/health', (req, res) => {
   const uptime = Math.floor((Date.now() - startTime) / 1000);
@@ -228,7 +301,32 @@ app.get('*', (req, res) => {
 // ======================
 // SERVER START
 // ======================
-const server = app.listen(PORT, () => {
+// WebSocket pour les mises à jour en temps réel
+wss.on('connection', (ws: WebSocket) => {
+  ws.on('message', (message: string) => {
+    console.log(`Message reçu: ${message}`);
+  });
+
+  // Fonction pour envoyer des notifications aux chauffeurs
+  const sendRideNotification = (rideData: any) => {
+    ws.send(JSON.stringify({
+      type: 'newRide',
+      data: rideData
+    }));
+  };
+
+  // Exemple: simulation d'une nouvelle course
+  setInterval(() => {
+    sendRideNotification({
+      id: Date.now(),
+      from: 'Paris, 75008',
+      to: 'Orly Airport',
+      price: 32.50
+    });
+  }, 30000); // Toutes les 30 secondes
+});
+
+httpServer.listen(PORT, () => {
   console.log('\n===========================================');
   console.log('🚀 ROMUO VTC - SERVEUR DÉMARRÉ');
   console.log('===========================================');
@@ -246,9 +344,9 @@ const server = app.listen(PORT, () => {
 // ======================
 // GRACEFUL SHUTDOWN
 // ======================
-const gracefulShutdown = (signal) => {
+const gracefulShutdown = (signal: string) => {
   console.log(`\n${signal} reçu, arrêt gracieux du serveur...`);
-  server.close(() => {
+  httpServer.close(() => {
     console.log('✅ Serveur fermé avec succès');
     process.exit(0);
   });

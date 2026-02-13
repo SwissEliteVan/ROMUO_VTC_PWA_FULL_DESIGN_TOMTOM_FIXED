@@ -1,5 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'wouter';
+import ImageOptimized from '../components/ImageOptimized';
+import SearchBar from '../components/SearchBar';
 import { ArrowRight, Shield, Clock, Star, Car } from 'lucide-react';
 
 export default function HomePage() {
@@ -15,8 +17,15 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background with gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-obsidian via-[#1A237E]/20 to-obsidian" />
+        {/* Hero image with overlay */}
+        <div className="absolute inset-0 z-0">
+          <ImageOptimized
+            src="/src/assets/images/hero/vtc-haut-de-gamme-berline-luxe-nuit-metropole.webp"
+            alt="Berline de luxe Mercedes noire circulant de nuit dans une métropole moderne"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-obsidian-900/90 to-obsidian-900/30" />
+        </div>
         
         {/* Content */}
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-32">
@@ -31,6 +40,10 @@ export default function HomePage() {
               Votre chauffeur privé VTC premium en Suisse. Confort, ponctualité et discrétion garantis.
             </p>
 
+            <div className="mb-12 w-full max-w-2xl mx-auto">
+              <SearchBar />
+            </div>
+            
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/reservation">
                 <a className="group inline-flex items-center justify-center gap-2 bg-gold-gradient text-obsidian px-8 py-4 rounded-full text-lg font-bold shadow-gold hover:-translate-y-1 transition-all duration-300">

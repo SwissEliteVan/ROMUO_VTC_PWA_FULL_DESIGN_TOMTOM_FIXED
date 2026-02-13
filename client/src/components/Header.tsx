@@ -1,9 +1,11 @@
 import { Link } from 'wouter';
 import { Menu, X, Phone } from 'lucide-react';
 import { useState } from 'react';
+import AuthModal from './AuthModal';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const navigation = [
     { name: 'Accueil', href: '/' },
@@ -44,6 +46,13 @@ export default function Header() {
               <Phone size={18} />
               <span>076 842 89 98</span>
             </a>
+            
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="bg-obsidian-700 hover:bg-obsidian-600 px-4 py-2 rounded-lg transition-colors text-obsidian-50"
+            >
+              Connexion
+            </button>
           </div>
 
           {/* Mobile menu button */}
@@ -76,9 +85,20 @@ export default function Header() {
               <Phone size={18} />
               <span>076 842 89 98</span>
             </a>
+            
+            <button
+              onClick={() => {
+                setIsAuthModalOpen(true);
+                setIsMenuOpen(false);
+              }}
+              className="w-full bg-obsidian-700 hover:bg-obsidian-600 px-4 py-2 rounded-lg transition-colors text-obsidian-50 mt-4"
+            >
+              Connexion
+            </button>
           </div>
         )}
       </nav>
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </header>
   );
 }

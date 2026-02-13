@@ -7,6 +7,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { AdminDashboard } from './components/admin/AdminDashboard';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/reservation" component={BookingPage} />
           <Route path="/a-propos" component={AboutPage} />
           <Route path="/contact" component={ContactPage} />
+          <Route path="/admin" component={AdminDashboard} />
         </main>
         
         <Footer />

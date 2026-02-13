@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
+import DriverTracker from '../components/DriverTracker';
 import { MapPin, Calendar, Users, Car, ArrowRight, Phone } from 'lucide-react';
 
 interface BookingForm {
@@ -366,7 +367,23 @@ export default function BookingPage() {
             </div>
           </div>
         </div>
+        
+        <div className="mt-16">
+          <h2 className="text-3xl font-black text-titanium mb-8 text-center">
+            Suivi en Temps Réel de Votre Chauffeur
+          </h2>
+          <div className="glass-effect rounded-3xl p-4 h-96">
+            <DriverTracker booking={mockBooking} />
+          </div>
+        </div>
       </div>
     </>
   );
 }
+
+// Mock booking data for development
+const mockBooking = {
+  id: 'dev-123',
+  pickup: { lat: 46.2044, lng: 6.1432 },
+  destination: { lat: 46.5286, lng: 6.5822 }
+};

@@ -26,11 +26,21 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#000000',
+        background_color: '#0A0A0A',
+        theme_color: '#0A0A0A',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' }
+        ],
+        display_override: ['standalone', 'minimal-ui'],
+        screenshots: [
+          {
+            src: '/images/app/interface-application-mobile-reservation-vtc-iphone-dark-mode.webp',
+            sizes: '1170x2532',
+            type: 'image/webp',
+            form_factor: 'narrow',
+            label: 'Interface de réservation VTC en mode sombre'
+          }
         ]
       },
       workbox: {
