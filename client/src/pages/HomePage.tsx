@@ -20,7 +20,8 @@ export default function HomePage() {
         {/* Hero image with overlay */}
         <div className="absolute inset-0 z-0">
           <ImageOptimized
-            src="/src/assets/images/hero/vtc-haut-de-gamme-berline-luxe-nuit-metropole.webp"
+            src="/src/assets/ima
+            ges/hero/vtc-haut-de-gamme-berline-luxe-nuit-metropole.webp"
             alt="Berline de luxe Mercedes noire circulant de nuit dans une métropole moderne"
             className="w-full h-full object-cover"
           />

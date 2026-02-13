@@ -4,7 +4,7 @@ const { Image } = require('image-js');
 
 async function checkImageSizes() {
   const categories = ['hero', 'chauffeur', 'dashboard', 'app'];
-  const basePath = 'client/src/assets/images';
+  const basePath = 'client/src="/images/src/assets/images';
   
   for (const category of categories) {
     const categoryPath = path.join(basePath, category);
