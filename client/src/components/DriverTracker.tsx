@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Map, Marker, Popup } from 'tomtom-map';
-import 'tomtom-map/dist/map.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 type DriverPosition = {
   lat: number;
@@ -20,34 +20,35 @@ interface DriverTrackerProps {
 
 export default function DriverTracker({ booking }: DriverTrackerProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<Map | null>(null);
+  const [map, setMap] = useState<L.Map | null>(null);
   const [driverPosition, setDriverPosition] = useState<DriverPosition | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [driverMarker, setDriverMarker] = useState<L.Marker | null>(null);
   
   // Initialize TomTom map
   useEffect(() => {
     if (!mapRef.current) return;
     
-    const newMap = new Map({
-      key: process.env.TOMTOM_API_KEY,
-      container: mapRef.current,
-      center: [booking.pickup.lng, booking.pickup.lat],
-      zoom: 13,
-      style: 'main',
-    });
+    const newMap = L.map(mapRef.current).setView(
+      [booking.pickup.lat, booking.pickup.lng],
+      13
+    );
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(newMap);
     
     setMap(newMap);
     
     // Add pickup and destination markers
-    new Marker()
-      .setLngLat([booking.pickup.lng, booking.pickup.lat])
-      .setPopup(new Popup().setHTML('<b>Point de prise en charge</b>'))
+    const pickupMarker = L.marker([booking.pickup.lat, booking.pickup.lng])
+      .bindPopup('<b>Point de prise en charge</b>')
       .addTo(newMap);
-      
-    new Marker({ color: 'red' })
-      .setLngLat([booking.destination.lng, booking.destination.lat])
-      .setPopup(new Popup().setHTML('<b>Destination</b>'))
-      .addTo(newMap);
+    
+    const destinationMarker = L.marker([booking.destination.lat, booking.destination.lng],
+      { icon: L.icon({ iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-red.png' }) }
+    ).bindPopup('<b>Destination</b>')
+     .addTo(newMap);
     
     return () => {
       newMap.remove();
@@ -88,30 +89,31 @@ export default function DriverTracker({ booking }: DriverTrackerProps) {
     if (!map || !driverPosition) return;
     
     // Remove existing driver marker
-    map.getMarkers().forEach(marker => {
-      if (marker.getElement()?.classList.contains('driver-marker')) {
-        marker.remove();
-      }
-    });
+    if (driverMarker) {
+      map.removeLayer(driverMarker);
+    }
     
     // Add new driver marker with rotation
-    const markerElement = document.createElement('div');
-    markerElement.className = 'driver-marker';
-    markerElement.innerHTML = `
-      <svg width="24" height="24" viewBox="0 0 24 24" 
-           fill="none" stroke="#4F46E5" stroke-width="2" 
-           transform="rotate(${driverPosition.bearing})">
-        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-        <circle cx="12" cy="9" r="3" fill="#4F46E5"/>
-      </svg>
-    `;
+    const driverIcon = L.divIcon({
+      className: 'driver-marker',
+      html: `
+        <svg width="24" height="24" viewBox="0 0 24 24"
+             fill="none" stroke="#4F46E5" stroke-width="2"
+             style="transform: rotate(${driverPosition.bearing}deg);">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+          <circle cx="12" cy="9" r="3" fill="#4F46E5"/>
+        </svg>
+      `,
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
     
-    new Marker({ element: markerElement })
-      .setLngLat([driverPosition.lng, driverPosition.lat])
+    const newDriverMarker = L.marker([driverPosition.lat, driverPosition.lng], { icon: driverIcon })
       .addTo(map);
+    setDriverMarker(newDriverMarker);
     
     // Pan map to driver position
-    map.panTo([driverPosition.lng, driverPosition.lat]);
+    map.panTo([driverPosition.lat, driverPosition.lng]);
     
   }, [driverPosition, map]);
   
