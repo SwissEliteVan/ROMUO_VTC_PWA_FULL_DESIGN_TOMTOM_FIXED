@@ -13,7 +13,7 @@ const DriverPage = () => {
         
         <div className="mb-8">
           <img
-            src="/src/assets/images/chauffeur/recrutement-chauffeur-vtc-professionnel-application-gps.webp"
+            src="/images/chauffeur/recrutement-chauffeur-vtc-professionnel-application-gps.webp"
             alt="Portrait d'un chauffeur VTC professionnel en costume avec smartphone"
             className="w-full h-auto rounded-lg"
           />
