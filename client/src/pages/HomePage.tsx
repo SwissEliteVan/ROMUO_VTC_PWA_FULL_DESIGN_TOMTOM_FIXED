@@ -15,6 +15,14 @@ export default function HomePage() {
         />
       </Helmet>
 
+      <div style={{ width: '100%', marginBottom: '2rem' }}>
+  <img 
+    src="/images/hero/vtc-haut-de-gamme-berline-luxe-nuit-metropole.webp" 
+    alt="Voiture de luxe circulant de nuit en métropole"
+    style={{ width: '100%', height: 'auto', borderRadius: '8px' }}
+  />
+</div>
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Hero image with overlay */}
