@@ -28,9 +28,9 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+* {
+  border-color: hsl(var(--border));
+}
   
   body {
     @apply bg-[#0A0A0A] text-[#E5E5E5] font-sans antialiased;
@@ -80,6 +80,10 @@
   }
 
   .hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-gold;
+    @apply transition-all duration-300 hover:-translate-y-1;
+    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15);
+  }
+  .hover-lift:hover {
+    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.15);
   }
 }

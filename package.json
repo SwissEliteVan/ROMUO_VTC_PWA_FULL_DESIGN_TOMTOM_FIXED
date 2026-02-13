@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
-    "build:server": "esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server/index.js --external:express",
+    "build:server": "esbuild server/index.ts --bundle --platform=node --target=node18 --format=esm --outfile=dist/server/index.js --external:express --external:dotenv --external:url --external:path --external:os",
     "preview": "vite preview --host",
     "start": "node dist/server/index.js",
     "start:pm2": "pm2 start ecosystem.config.cjs --env production",
@@ -101,8 +101,8 @@
     "vitest": "^2.1.4",
     "vite-plugin-pwa": "^0.21.0",
     "@types/leaflet": "^1.9.12"
-  },
-  "packageManager": "pnpm@10.4.1+sha512.c753b6c3ad7afa13af388fa6d808035a008e30ea9993f58c6663e2bc5ff21679aa834db094987129aa4d488b86df57f7b634981b2f827cdcacc698cc0cfb88af",
+    },
+  "packageManager": "pnpm@10.4.1...",
   "pnpm": {
     "overrides": {
       "tailwindcss>nanoid": "3.3.7"
